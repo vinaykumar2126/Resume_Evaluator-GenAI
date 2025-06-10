@@ -9,6 +9,7 @@ RUN npm install
 # Copy source code from resum_ai folder
 COPY new_ai/ .
 # Build the application (Next.js build)
+RUN npm run test:ci
 RUN npm run build
 
 # Production stage
