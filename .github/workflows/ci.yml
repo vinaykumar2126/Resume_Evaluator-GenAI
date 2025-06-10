@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Debug workspace (root)
+        run: ls -la
+
+      - name: Debug resum_ai contents
+        run: ls -la resum_ai
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: resum_ai
+        run: npm install
+
+      # - name: Run lint
+      #   working-directory: resum_ai
+      #   run: npm run lint
+
+      - name: Run tests
+        working-directory: resum_ai
+        run: npm run test:ci
+
+      - name: Run build
+        working-directory: resum_ai
+        run: npm run build
+
+  docker:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t resumai:latest .
+
+      - name: Test Docker image
+        run: |
+          docker run --rm \
+            -e GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} \
+            resumai:latest npm run test:ci
+
+  deploy:
+    needs: [test, docker]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to production
+        run: echo "Deploy to production server"

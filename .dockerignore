@@ -1,0 +1,19 @@
+# Don’t send any of your local modules (they’ll be installed inside the image)
+**/node_modules
+# Next.js build output you copy from the “builder” stage, not into the context
+**/.next
+# Env files you don’t want baked into production images
+**/.env.local
+**/.env.production
+# Ignore CI/github metadata—never needed in the container
+.github
+.gitlab-ci.yml
+# Editor/OS cruft
+.vscode
+.idea
+*.swp
+*.swo
+Thumbs.db
+# Docker files themselves (you usually don’t copy these into the image)
+Dockerfile*
+docker-compose*.yml
