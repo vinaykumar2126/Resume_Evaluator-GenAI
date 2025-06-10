@@ -19,8 +19,8 @@ jobs:
       - name: Debug workspace (root)
         run: ls -la
 
-      - name: Debug resum_ai contents
-        run: ls -la resum_ai
+      - name: Debug new_ai contents
+        run: ls -la new_ai
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,19 +28,19 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        working-directory: resum_ai
+        working-directory: new_ai
         run: npm install
 
       # - name: Run lint
-      #   working-directory: resum_ai
+      #   working-directory: new_ai
       #   run: npm run lint
 
       - name: Run tests
-        working-directory: resum_ai
+        working-directory: new_ai
         run: npm run test:ci
 
       - name: Run build
-        working-directory: resum_ai
+        working-directory: new_ai
         run: npm run build
 
   docker:
